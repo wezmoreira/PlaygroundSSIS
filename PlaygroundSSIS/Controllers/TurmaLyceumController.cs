@@ -18,12 +18,12 @@ namespace PlaygroundSSIS.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get() => Ok(_context.TurmasLyceum.ToList());
+        public IActionResult Get() => Ok(_context.Turmas.ToList());
 
         [HttpPost]
         public IActionResult Post([FromBody] TurmaLyceum turma)
         {
-            _context.TurmasLyceum.Add(turma);
+            _context.Turmas.Add(turma);
             _context.SaveChanges();
             return Created($"api/turmas/{turma.Id}", turma);
         }
@@ -36,7 +36,7 @@ namespace PlaygroundSSIS.Controllers
                 return BadRequest("ID mismatch");
             }
 
-            var existingTurma = _context.TurmasLyceum.Find(id);
+            var existingTurma = _context.Turmas.Find(id);
             if (existingTurma == null)
             {
                 return NotFound();

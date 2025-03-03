@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turmas</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 50%;
+            max-width: 600px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .close {
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .modal-content p {
+            margin: 10px 0;
+        }
+
+        .modal-content .highlight {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .modal-content .row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .modal-content .row p {
+            flex: 1;
+            margin: 0 10px;
+        }
+
+        .modal-content .row input {
+            flex: 1;
+            margin: 0 10px;
+            padding: 5px;
+        }
+
+        .modal-content .buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .modal-content .buttons button {
+            margin-left: 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .modal-content .buttons .save {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .modal-content .buttons .cancel {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .edit-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid" id="turmasGrid"></div>
+
+    <!-- Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <p class="highlight" id="modalDisciplina"></p>
+            <div class="row">
+                <div>
+                    <p><strong>Curso:</strong></p>
+                    <input type="text" id="modalCurso">
+                </div>
+                <div>
+                    <p><strong>Número de Alunos:</strong></p>
+                    <input type="number" id="modalNumeroAlunos">
+                </div>
+            </div>
+            <div class="row">
+                <div>
+                    <p><strong>Professor:</strong></p>
+                    <input type="text" id="modalDocente">
+                </div>
+                <div>
+                    <p><strong>Email:</strong></p>
+                    <input type="email" id="modalEmail">
+                </div>
+            </div>
+            <div class="row">
+                <div>
+                    <p><strong>Sala:</strong></p>
+                    <input type="text" id="modalSala">
+                </div>
+                <div>
+                    <p><strong>Prédio:</strong></p>
+                    <input type="text" id="modalPredio">
+                </div>
+                <div>
+                    <p><strong>Período:</strong></p>
+                    <input type="text" id="modalPeriodo">
+                </div>
+            </div>
+            <div class="row">
+                <div>
+                    <p><strong>Data Início:</strong></p>
+                    <input type="date" id="modalDataInicio">
+                </div>
+                <div>
+                    <p><strong>Data Fim:</strong></p>
+                    <input type="date" id="modalDataFim">
+                </div>
+            </div>
+            <button class="edit-button" id="editButton">Editar</button>
+            <div class="buttons" id="editButtons" style="display: none;">
+                <button class="save" id="saveButton">Salvar</button>
+                <button class="cancel" id="cancelButton">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTurma = null;
+
+        async function carregarTurmas() {
+            try {
+                const response = await fetch('http://localhost:5000/api/turma-lyceum');
+                const turmas = await response.json();
+                const grid = document.getElementById('turmasGrid');
+
+                console.log('Turmas:', turmas);
+
+                turmas.forEach(turma => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `<h3>${turma.nome}</h3><p>ID: ${turma.id}</p>`;
+                    card.onclick = () => mostrarDetalhes(turma);
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar turmas:', error);
+            }
+        }
+
+        function mostrarDetalhes(turma) {
+            currentTurma = turma;
+            document.getElementById('modalTitle').textContent = turma.nome;
+            document.getElementById('modalDisciplina').textContent = turma.disciplina;
+            document.getElementById('modalCurso').value = turma.curso;
+            document.getElementById('modalNumeroAlunos').value = turma.numeroAlunos;
+            document.getElementById('modalDocente').value = turma.docente;
+            document.getElementById('modalEmail').value = turma.email;
+            document.getElementById('modalSala').value = turma.sala;
+            document.getElementById('modalPredio').value = turma.predio;
+            document.getElementById('modalPeriodo').value = turma.periodo;
+            document.getElementById('modalDataInicio').value = turma.dataInicio.split('T')[0];
+            document.getElementById('modalDataFim').value = turma.dataFim.split('T')[0];
+
+            const modal = document.getElementById('modal');
+            modal.style.display = 'flex';
+        }
+
+        function habilitarEdicao() {
+            document.querySelectorAll('.modal-content input').forEach(input => {
+                input.disabled = false;
+            });
+
+            document.getElementById('editButton').style.display = 'none';
+            document.getElementById('editButtons').style.display = 'flex';
+        }
+
+        function salvarEdicao() {
+            currentTurma.disciplina = document.getElementById('modalDisciplina').textContent;
+            currentTurma.curso = document.getElementById('modalCurso').value;
+            currentTurma.numeroAlunos = document.getElementById('modalNumeroAlunos').value;
+            currentTurma.docente = document.getElementById('modalDocente').value;
+            currentTurma.email = document.getElementById('modalEmail').value;
+            currentTurma.sala = document.getElementById('modalSala').value;
+            currentTurma.predio = document.getElementById('modalPredio').value;
+            currentTurma.periodo = document.getElementById('modalPeriodo').value;
+            currentTurma.dataInicio = document.getElementById('modalDataInicio').value;
+            currentTurma.dataFim = document.getElementById('modalDataFim').value;
+
+            document.querySelectorAll('.modal-content input').forEach(input => {
+                input.disabled = true;
+            });
+
+            document.getElementById('editButton').style.display = 'block';
+            document.getElementById('editButtons').style.display = 'none';
+        }
+
+        function cancelarEdicao() {
+            mostrarDetalhes(currentTurma);
+
+            document.querySelectorAll('.modal-content input').forEach(input => {
+                input.disabled = true;
+            });
+
+            document.getElementById('editButton').style.display = 'block';
+            document.getElementById('editButtons').style.display = 'none';
+        }
+
+        document.getElementById('editButton').onclick = habilitarEdicao;
+        document.getElementById('saveButton').onclick = salvarEdicao;
+        document.getElementById('cancelButton').onclick = cancelarEdicao;
+
+        document.getElementById('closeModal').onclick = () => {
+            document.getElementById('modal').style.display = 'none';
+        };
+
+        window.onclick = (event) => {
+            const modal = document.getElementById('modal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+
+        window.onload = carregarTurmas;
+    </script>
+</body>
+</html>

@@ -7,7 +7,7 @@ namespace PlaygroundSSIS.Data
     public class LyceumDbContext : DbContext
     {
         public LyceumDbContext(DbContextOptions<LyceumDbContext> options) : base(options) { }
-        public DbSet<TurmaLyceum> TurmasLyceum { get; set; }
+        public DbSet<TurmaLyceum> Turmas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
