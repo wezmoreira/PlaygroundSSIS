@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão Antiga</title>
+    <style>
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            background-color: #C0C0C0;
+            margin: 0;
+            padding: 0;
+        }
+        .window {
+            width: 600px;
+            margin: 50px auto;
+            background: #ECE9D8;
+            border: 2px solid #808080;
+            box-shadow: 4px 4px 0px #404040;
+            padding: 15px;
+        }
+        .title-bar {
+            background: linear-gradient(to right, #000080, #4B6EAF);
+            color: white;
+            padding: 5px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .buttons {
+            display: flex;
+            gap: 3px;
+        }
+        .btn {
+            width: 14px;
+            height: 14px;
+            background: silver;
+            border: 1px solid gray;
+            display: inline-block;
+        }
+        .menu-bar {
+            background: #B0B0B0;
+            padding: 3px;
+            border-bottom: 2px solid gray;
+            font-size: 14px;
+        }
+        .menu-bar span {
+            padding: 3px 10px;
+            cursor: pointer;
+        }
+        .tab-container {
+            display: flex;
+            margin-top: 10px;
+        }
+        .tab {
+            padding: 5px 10px;
+            background: #B0B0B0;
+            border: 2px solid gray;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        .tab.active {
+            background: white;
+        }
+        .content {
+            padding: 15px;
+        }
+        .input-group {
+            margin-bottom: 10px;
+        }
+        .input-group label {
+            display: block;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 3px;
+            border: 2px inset #808080;
+            background: white;
+        }
+        .row {
+            display: flex;
+            gap: 10px;
+        }
+        .row .input-group {
+            flex: 1;
+        }
+        .button-group {
+            margin-top: 10px;
+        }
+        .button-group button {
+            background: #D4D0C8;
+            border: 2px outset #808080;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .hidden {
+            display: none;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .table th, .table td {
+            border: 1px solid #808080;
+            padding: 5px;
+            text-align: left;
+        }
+        .table th {
+            background: #B0B0B0;
+        }
+    </style>
+    <script>
+         let dados;
+
+
+        function switchTab(tabName) {
+            document.getElementById('formulario').classList.add('hidden');
+            document.getElementById('agenda').classList.add('hidden');
+            document.getElementById(tabName).classList.remove('hidden');
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+
+        // async function adicionarDados() {
+        //     const dados = {
+        //         nome: document.getElementById("nome").value,
+        //         email: document.getElementById("email").value,
+        //         disciplina: document.getElementById("disciplina").value,
+        //         //turma: document.getElementById("turma").value,
+        //         numeroAlunos: parseInt(document.getElementById("numeroAlunos").value),
+        //         curso: document.getElementById("curso").value,
+        //         docente: document.getElementById("docente").value,
+        //         sala: document.getElementById("sala").value,
+        //         predio: document.getElementById("predio").value,
+        //         dataInicio: document.getElementById("dataInicio").value,
+        //         dataFim: document.getElementById("dataFim").value,
+        //         periodo: document.getElementById("periodo").value
+        //     };
+
+        //     console.log('dados', dados);
+
+        //     await fetch("https://localhost:5000/api/turmas", {
+        //         method: "POST",
+        //         headers: { "Content-Type": "application/json" },
+        //         body: JSON.stringify(dados)
+        //     });
+
+        //     alert("Dados salvos com sucesso!");
+        // }
+
+        async function salvarDados() {
+            const dados = {
+                id: this.dados[0].id,
+                nome: document.getElementById("nome").value,
+                email: document.getElementById("email").value,
+                disciplina: document.getElementById("disciplina").value,
+                //turma: document.getElementById("turma").value,
+                numeroAlunos: parseInt(document.getElementById("numeroAlunos").value),
+                curso: document.getElementById("curso").value,
+                docente: document.getElementById("docente").value,
+                sala: document.getElementById("sala").value,
+                predio: document.getElementById("predio").value,
+                dataInicio: document.getElementById("dataInicio").value,
+                dataFim: document.getElementById("dataFim").value,
+                periodo: document.getElementById("periodo").value
+            };
+
+            console.log('dados', dados, this.dados[0]);
+
+            await fetch(`https://localhost:5000/api/turmas/${dados.id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(dados)
+            });
+
+            alert("Dados salvos com sucesso!");
+        }
+
+
+        // async function carregarDados() {
+        //     const response = await fetch("https://localhost:5000/api/turmas");
+        //     this.dados = await response.json();
+        //     console.log('carregarDados', response, dados);
+
+        //     let lista = document.getElementById("listaAulas");
+        //     lista.innerHTML = "";
+        //     this.dados.forEach(aula => {
+        //         let item = document.createElement("li");
+        //         item.textContent = `${aula.nome} - ${aula.disciplina} (${aula.turma})`;
+        //         lista.appendChild(item);
+        //     });
+        // }
+
+        async function carregarDados() {
+            try {
+                const response = await fetch("https://localhost:5000/api/turmas");
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                this.dados = await response.json();
+                console.log('carregarDados', response, dados);
+
+                // Preencher o formulário com os dados da primeira turma
+                if (this.dados.length > 0) {
+                    const turma = this.dados[0];
+                    document.getElementById("nome").value = turma.nome;
+                    document.getElementById("email").value = turma.email;
+                    document.getElementById("disciplina").value = turma.disciplina;
+                    //document.getElementById("turma").value = turma.turma;
+                    document.getElementById("numeroAlunos").value = turma.numeroAlunos;
+                    document.getElementById("curso").value = turma.curso;
+                    document.getElementById("docente").value = turma.docente;
+                    document.getElementById("sala").value = turma.sala;
+                    document.getElementById("predio").value = turma.predio;
+                    document.getElementById("dataInicio").value = turma.dataInicio.split('T')[0];
+                    document.getElementById("dataFim").value = turma.dataFim.split('T')[0];
+                    document.getElementById("periodo").value = turma.periodo;
+                }
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+            }
+        }
+
+    </script>
+</head>
+<body>
+    <div class="window">
+        <div class="title-bar">
+            <span>Sistema de Integração de turma</span>
+            <div class="buttons">
+                <div class="btn"></div>
+                <div class="btn"></div>
+                <div class="btn"></div>
+            </div>
+        </div>
+        <div class="menu-bar">
+            <span>Arquivo</span>
+            <span>Editar</span>
+            <span>Ajuda</span>
+        </div>
+        <div class="tab-container">
+            <div id="formulario-tab" class="tab active" onclick="switchTab('formulario')">Formulário</div>
+            <div id="agenda-tab" class="tab" onclick="switchTab('agenda')">Agenda</div>
+        </div>
+
+        <div id="formulario" class="content">
+            <div class="input-group"><label>E-mail:</label><input type="email" id="email"></div>
+            <div class="input-group"><label>Disciplina:</label><input type="text" id="disciplina"></div>
+            <div class="row">
+                <div class="input-group"><label>Turma:</label><input type="text" id="nome"></div>
+                <div class="input-group"><label>Número de Alunos:</label><input type="number" id="numeroAlunos"></div>
+            </div>
+            <div class="input-group"><label>Curso:</label><input type="text" id="curso"></div>
+            <div class="input-group"><label>Docente:</label><input type="text" id="docente"></div>
+            <div class="row">
+                <div class="input-group"><label>Sala:</label><input type="text" id="sala"></div>
+                <div class="input-group"><label>Prédio:</label><input type="text" id="predio"></div>
+            </div>
+            <div class="row">
+                <div class="input-group"><label>Data Início:</label><input type="date" id="dataInicio"></div>
+                <div class="input-group"><label>Data Fim:</label><input type="date" id="dataFim"></div>
+                <div class="input-group"><label>Período:</label><input type="text" id="periodo"></div>
+            </div>
+            <div class="button-group"><button onclick="salvarDados()">Salvar</button><button onclick="carregarDados()">Carregar</button></div>
+        </div>
+        
+        <div id="agenda" class="content hidden">
+            <ul id="listaAulas"></ul>
+            <table class="table">
+                <thead><tr><th>Docente</th><th>Data Início</th><th>Data Fim</th><th>Horário Início</th><th>Horário Fim</th></tr></thead>
+                <tbody><tr><td>Prof. João</td><td>05/02/2025</td><td>05/02/2025</td><td>08:00</td><td>10:00</td></tr>
+                    <tr><td>Prof. Maria</td><td>06/02/2025</td><td>06/02/2025</td><td>10:00</td><td>12:00</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
