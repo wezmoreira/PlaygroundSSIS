@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PlaygroundSSIS")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9dee194dafafd4eea07f0c34e25fa5c4082ee31d")]
 [assembly: System.Reflection.AssemblyProductAttribute("PlaygroundSSIS")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PlaygroundSSIS")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
