@@ -25,7 +25,7 @@ namespace PlaygroundSSIS.Controllers
         {
             _context.Turmas.Add(turma);
             _context.SaveChanges();
-            return Created($"api/turmas/{turma.Id}", turma);
+            return Ok();
         }
 
         [HttpPut("{id}")]
@@ -33,7 +33,7 @@ namespace PlaygroundSSIS.Controllers
         {
             if (id != turma.Id)
             {
-                return BadRequest("ID mismatch");
+                return BadRequest("ID Incorreto");
             }
 
             var existingTurma = _context.Turmas.Find(id);
@@ -53,10 +53,6 @@ namespace PlaygroundSSIS.Controllers
             existingTurma.DataInicio = turma.DataInicio;
             existingTurma.DataFim = turma.DataFim;
             existingTurma.Periodo = turma.Periodo;
-
-            //_context.Entry(existingTurma).State = EntityState.Modified;
-            //_context.TurmasLyceum.Update(existingTurma);
-            //_context.SaveChanges();
 
             _context.Entry(existingTurma).State = EntityState.Modified;
             _context.SaveChanges();

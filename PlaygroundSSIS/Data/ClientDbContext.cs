@@ -7,11 +7,11 @@ namespace PlaygroundSSIS.Data
     public class ClientDbContext : DbContext
     {
         public ClientDbContext(DbContextOptions<ClientDbContext> options) : base(options) { }
-        public DbSet<TurmaLyceum> Turmas { get; set; }
+        public DbSet<TurmaClient> Turmas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<TurmaLyceum>()
+            modelBuilder.Entity<TurmaClient>()
                 .ToTable(tb => tb.UseSqlOutputClause(false));
         }
     }

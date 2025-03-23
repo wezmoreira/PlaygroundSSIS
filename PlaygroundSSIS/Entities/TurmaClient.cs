@@ -13,6 +13,6 @@
         public string Predio { get; set; }
         public DateTime DataInicio { get; set; }
         public DateTime DataFim { get; set; }
-        public string Periodo { get; set; }
+        public int Periodo { get; set; }
     }
 }
