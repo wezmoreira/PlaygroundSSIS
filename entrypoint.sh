@@ -1,3 +1,5 @@
+#!/bin/bash
+
 /opt/mssql/bin/sqlservr &
 
 echo "Aguardando o SQL Server iniciar..."
